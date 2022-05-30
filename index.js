@@ -10,6 +10,7 @@ const config = {
 const pool = new Pool(config);
 
 const [metodo, origen, destino, monto] = process.argv.slice(2);
+//const[origen, destino, monto] = process.argv.slice(2);
 
 const transferir = async (origen, destino, monto) => {
   //Validando datos
@@ -37,11 +38,11 @@ const transferir = async (origen, destino, monto) => {
     values: [montoValido, destinoValido],
   };
   try {
-    await pool.query("BEGIN");
+    await pool.query('BEGIN');
     await pool.query(transferBalanceQuery);
     await pool.query(reduceBalanceQuery);
     await pool.query(increaseBalanceQuery);
-
+    await pool.query('COMMIT');
     console.log("Transferencia exitosa");
     pool.end();
   } catch (e) {
@@ -65,7 +66,7 @@ const getTransferencias = async (userID) => {
     };
     const { rows } = await pool.query(balanceQuery);
     console.log(rows);
-    pool.end();
+  
   } catch (e) {
     console.log(e.code, e.detail);
     console.log("Error al obtener las transferencias");
@@ -81,7 +82,7 @@ const getBalance = async (userID) => {
     };
     const { rows } = await pool.query(balanceQuery);
     console.log(rows);
-    pool.end();
+    
   } catch (e) {
     console.log(e.code, e.detail);
     console.log("Error al obtener el saldo");
